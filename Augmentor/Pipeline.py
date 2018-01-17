@@ -192,13 +192,19 @@ class Pipeline(object):
                 image = operation.perform_operation(image)
 
         if save_to_disk:
-            file_name = str(uuid.uuid4()) + "." + self.save_format
+            # file_name = str(uuid.uuid4()) + "." + self.save_format
+            # Change file save name
+
+            filename = os.path.basename(augmentor_image.image_path)
+            filename= os.path.splitext(filename)
+            file_name = str(filename[0]) + str('_1') +str(filename[1])
             try:
+
                 # A strange error is forcing me to do this at the moment, but will fix later properly
                 # TODO: Fix this!
                 if image.mode != "RGB":
                     image = image.convert("RGB")
-                file_name = augmentor_image.class_label + "_" + file_name
+                # file_name = augmentor_image.class_label + "_" + file_name
                 image.save(os.path.join(augmentor_image.output_directory, file_name), self.save_format)
             except IOError:
                 print("Error writing %s." % file_name)
@@ -1350,3 +1356,4 @@ class Pipeline(object):
             raise ValueError("The rectangle_area must be between 0.1 and 1.")
         else:
             self.add_operation(RandomErasing(probability=probability, rectangle_area=rectangle_area))
+
